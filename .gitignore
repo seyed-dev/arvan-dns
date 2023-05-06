@@ -1,0 +1,7 @@
+.env
+.idea
+dist/
+build/
+*.egg-info
+Makefile
+domains.txt
