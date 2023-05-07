@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='arvan_dns',
-    version='1.0.2',
+    version='1.0.5',
     description='Arvan DNS updater',
     long_description=open('README.md', 'r').read(),
     long_description_content_type='text/markdown',
