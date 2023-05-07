@@ -21,7 +21,7 @@ example.net
 ### run the command
 
 ```bash
-arvan-dns --bearer_token=<your bearer_token> --old_ip=<your old ip> --new_ip=<your new ip> --domains_file=<your domains file>
+arvan-dns --bearer_token=<your bearer_token> --old_ip=<your old ip> --new_ip=<your new ip> --port=<your new port> --domains_file=<your domains file>
 ```
 
 ## Contributing

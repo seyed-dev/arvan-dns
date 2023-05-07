@@ -14,6 +14,7 @@ parser.add_argument('--old_ip', required=True, help='your old ip')
 parser.add_argument('--new_ip', required=True, help='your new ip')
 parser.add_argument('--domains_file', required=True, help='file with domains')
 parser.add_argument('--sleep_time', required=False, default=10, help='sleep time between requests')
+parser.add_argument('--port', required=False, default=8080, help='sleep time between requests')
 
 args = parser.parse_args()
 
@@ -22,12 +23,13 @@ OLD_IP = args.old_ip
 NEW_IP = args.new_ip
 SLEEP_TIME = int(args.sleep_time)
 DOMAINS_FILE = args.domains_file
+PORT = args.port
 
 headers = {
         'authority': 'napi.arvancloud.ir',
         'accept': 'application/json, text/plain, */*',
         'accept-language': 'fa',
-        'authorization': f'Bearer {BEARER_TOKEN}',
+        'authorization': f'Bearer DwVZf8ZpyZgP5eoGVP5KUMxeLAAJziAxUBu7Cu2Vf0s6e0jRKoqzsVAbYiGDiWZ6d973Lb5xQlhzzcy2qd6CrD0Q7aCsMQ4KSQlMqjOkDy1R74HfMdSK0gG5Jwdonqe2K4LJWmL1xXRrzdzlmPr5pDmYxLkaaYAbNQYEdttFOFJK6PgJs5FS9HMXTgy27Ip7EzvRGrV6Jb0PQx4npsk2lKjXSWWnclS7SboLUs6gE7mslR92oH3e2Cku5VB9bxX.d8e200a4-1307-441e-a920-9cccf7f4b23d',
         'content-type': 'application/json',
         'origin': 'https://panel.arvancloud.ir',
         'referer': 'https://panel.arvancloud.ir/',
@@ -44,25 +46,25 @@ with open(DOMAINS_FILE) as file:
     domains = [line.rstrip() for line in file]
 
 for domain_name in domains:
-    print(f'trying to update {domain_name} dns records')
     url = f'{BASE_URL}/{domain_name}/dns-records?page=1&per_page=25'
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
-        print(f'request to get records for {domain_name} failed')
+        print(f'request to get records for {domain_name} failed, status_code: {response.status_code}')
         continue
+    print(f'trying to update {domain_name} dns records')
     for dns in response.json()['data']:
         try:
             if dns['type'] == 'a':
                 if dns['value'][0]['ip'] == OLD_IP:
                     data = {
-                        "id": dns["id"],
-                        "type": "a",
-                        "name": dns["name"],
-                        "ttl": 120,
-                        "value": [{"ip": NEW_IP, "port": None, "weight": 100, "country": ""}],
-                        "cloud": True,
-                        "upstream_https": "default",
-                        "ip_filter_mode": {"count": "single", "order": "none", "geo_filter": "none"}
+                        'type': 'A', 
+                        'name': dns["name"], 
+                        'cloud': True, 
+                        'value': [{'ip': NEW_IP, 'port': PORT, 'weight': 100, 'country': ''}], 
+                        'upstream_https': 'http', 
+                        'ip_filter_mode': {'count': 'single', 'order': 'none', 'geo_filter': 'none'},
+                        'id': dns["id"], 
+                        'ttl': 120
                     }
                     retry = 0
                     while retry < 3:
@@ -82,6 +84,5 @@ for domain_name in domains:
             print(f'DNS for {domain_name} faild to update')
             print(f'Error : {e}')
             RECORDS += 1
-            
-
+        
 print(f'All done, {RECORDS} records from {len(domains)} domains updated')
