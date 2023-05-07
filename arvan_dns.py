@@ -29,7 +29,7 @@ headers = {
         'authority': 'napi.arvancloud.ir',
         'accept': 'application/json, text/plain, */*',
         'accept-language': 'fa',
-        'authorization': f'Bearer DwVZf8ZpyZgP5eoGVP5KUMxeLAAJziAxUBu7Cu2Vf0s6e0jRKoqzsVAbYiGDiWZ6d973Lb5xQlhzzcy2qd6CrD0Q7aCsMQ4KSQlMqjOkDy1R74HfMdSK0gG5Jwdonqe2K4LJWmL1xXRrzdzlmPr5pDmYxLkaaYAbNQYEdttFOFJK6PgJs5FS9HMXTgy27Ip7EzvRGrV6Jb0PQx4npsk2lKjXSWWnclS7SboLUs6gE7mslR92oH3e2Cku5VB9bxX.d8e200a4-1307-441e-a920-9cccf7f4b23d',
+        'authorization': f'Bearer {BEARER_TOKEN}',
         'content-type': 'application/json',
         'origin': 'https://panel.arvancloud.ir',
         'referer': 'https://panel.arvancloud.ir/',
