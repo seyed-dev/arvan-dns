@@ -9,7 +9,8 @@ RECORDS = 0
 
 parser = argparse.ArgumentParser()
 parser = argparse.ArgumentParser()
-parser.add_argument('--bearer_token', required=True, help='your bearer_token')
+parser.add_argument('--email', required=True, help='your email address')
+parser.add_argument('--password', required=True, help='your password')
 parser.add_argument('--old_ip', required=True, help='your old ip')
 parser.add_argument('--new_ip', required=True, help='your new ip')
 parser.add_argument('--domains_file', required=True, help='file with domains')
@@ -18,12 +19,46 @@ parser.add_argument('--port', required=False, default=8080, help='sleep time bet
 
 args = parser.parse_args()
 
-BEARER_TOKEN = args.bearer_token
+EMAIL = args.email
+PASSWORD = args.password
 OLD_IP = args.old_ip
 NEW_IP = args.new_ip
 SLEEP_TIME = int(args.sleep_time)
 DOMAINS_FILE = args.domains_file
 PORT = args.port
+
+headers = {
+    'authority': 'dejban.arvancloud.ir',
+    'accept': 'application/json, text/plain, */*',
+    'accept-language': 'fa',
+    'content-type': 'application/json;charset=UTF-8',
+    'origin': 'https://accounts.arvancloud.ir',
+    'referer': 'https://accounts.arvancloud.ir/',
+    'sec-ch-ua': '"Google Chrome";v="113", "Chromium";v="113", "Not-A.Brand";v="24"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"macOS"',
+    'sec-fetch-dest': 'empty',
+    'sec-fetch-mode': 'cors',
+    'sec-fetch-site': 'same-site',
+    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
+    'x-content-type-options': 'nosniff',
+    'x-frame-options': 'DENY',
+    'x-redirect-uri': 'https://panel.arvancloud.ir'
+}
+
+login_url = "https://dejban.arvancloud.ir/v1/auth/login"
+login_data = {
+    "email": EMAIL,
+    "password": PASSWORD,
+    "captcha": "v3.undefined"
+}
+response = requests.post(login_url, data=json.dumps(login_data), headers=headers)
+if response.status_code != 200:
+    print(f'login failed, status_code: {response.status_code}, {response.text}')
+    exit()
+response = response.json()
+BEARER_TOKEN = f'{response["data"]["accessToken"]}.{response["data"]["defaultAccount"]}'
+
 
 headers = {
         'authority': 'napi.arvancloud.ir',
@@ -41,6 +76,7 @@ headers = {
         'sec-fetch-site': 'same-site',
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'
     }
+
 
 with open(DOMAINS_FILE) as file:
     domains = [line.rstrip() for line in file]
@@ -86,3 +122,7 @@ for domain_name in domains:
             RECORDS += 1
         
 print(f'All done, {RECORDS} records from {len(domains)} domains updated')
+
+
+
+

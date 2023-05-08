@@ -4,4 +4,4 @@ dist/
 build/
 *.egg-info
 Makefile
-domains.txt
+domains*.txt
